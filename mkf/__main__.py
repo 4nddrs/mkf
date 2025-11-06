@@ -133,9 +133,9 @@ def create_structure(base_path, structure):
         elif isinstance(content, list):
             os.makedirs(path, exist_ok=True)
             for file_name in content:
-                open(os.path.join(path, file_name), "w").close()
+                open(os.path.join(path, file_name), "w", encoding="utf-8").close()
         else:
-            open(path, "w").close()
+            open(path, "w", encoding="utf-8").close()
 
 # 💬 Small delay for visual effect
 def wait(msg):
@@ -161,11 +161,14 @@ def main():
     create_structure(base_path, TEMPLATE)
 
     wait("🧩 Adding base files...")
-    with open(os.path.join(base_path, "app", "main.py"), "w") as f:
-        f.write(MAIN_TEMPLATE)
+    # Open in binary and write UTF-8 bytes to avoid platform encoding issues
+    # (e.g. Windows cp1252 can't encode emoji). Writing bytes is robust
+    # regardless of the system locale.
+    with open(os.path.join(base_path, "app", "main.py"), "wb") as f:
+        f.write(MAIN_TEMPLATE.encode("utf-8"))
 
-    with open(os.path.join(base_path, "README.md"), "w") as f:
-        f.write(README_TEMPLATE)
+    with open(os.path.join(base_path, "README.md"), "wb") as f:
+        f.write(README_TEMPLATE.encode("utf-8"))
 
     wait("🐍 Creating virtual environment...")
     subprocess.run(["python3", "-m", "venv", os.path.join(base_path, ".venv")])
@@ -176,7 +179,9 @@ def main():
     subprocess.run([pip_path, "install", "fastapi", "uvicorn"], stdout=subprocess.DEVNULL)
 
     wait("📝 Generating requirements.txt...")
-    with open(os.path.join(base_path, "requirements.txt"), "w") as f:
+    # Write requirements in binary so subprocess output (bytes) is written
+    # directly and no text-encoding conversion happens.
+    with open(os.path.join(base_path, "requirements.txt"), "wb") as f:
         subprocess.run([pip_path, "freeze"], stdout=f)
 
     wait("🗃️  Initializing Git repository...")

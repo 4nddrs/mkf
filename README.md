@@ -4,26 +4,28 @@ A simple CLI tool to generate FastAPI starter projects with a modular structure.
 
 ## Installation
 
+Install via pip:
+```bash
+pip install mkf
+```
+
+Or install from source:
+
 1. Clone this repository:
    ```bash
    git clone <repo_url>
    cd mkf
    ```
 
-2. Make the script executable:
+2. Install the package:
    ```bash
-   chmod +x mkf
-   ```
-
-3. Optionally, move it to your PATH:
-   ```bash
-   sudo cp mkf /usr/local/bin/
+   pip install .
    ```
 
 ## Usage
 
 ```bash
-./mkf <project_name>
+mkf <project_name>
 ```
 
 Replace `<project_name>` with the name of your new FastAPI project.
